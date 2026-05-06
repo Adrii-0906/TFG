@@ -1,0 +1,396 @@
+@if (cargando()) {
+<div class="flex flex-col items-center justify-center h-96">
+  <svg class="w-10 h-10 text-golapp-green animate-spin mb-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+</div>
+}
+
+@if (!cargando() && torneo()) {
+<div class="relative rounded-2xl bg-golapp-card border border-golapp-border overflow-hidden mb-6">
+  <div class="absolute inset-0 opacity-10"><div class="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-golapp-green/40 blur-3xl"></div></div>
+  <div class="relative p-6 sm:p-8">
+    <a routerLink="/dashboard/torneos" class="inline-flex items-center gap-1.5 text-sm text-golapp-text-muted hover:text-golapp-green transition-colors mb-5">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg> Volver
+    </a>
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3 mb-2 flex-wrap">
+          <h1 class="text-2xl sm:text-3xl font-bold text-golapp-text">{{ torneo()!.nombre }}</h1>
+          <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold" [class]="getTipoClasses(torneo()!.tipoTorneo)">{{ torneo()!.tipoTorneo }}</span>
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border" [class]="getEstadoTorneoClasses(torneo()!.estado || 'BORRADOR')">{{ torneo()!.estado || 'BORRADOR' }}</span>
+        </div>
+        @if (torneo()!.descripcion) { <p class="text-golapp-text-muted text-sm mb-3 max-w-2xl">{{ torneo()!.descripcion }}</p> }
+        <div class="flex items-center gap-4 text-xs text-golapp-text-muted">
+          <span>{{ formatFecha(torneo()!.fechaInicio) }} — {{ formatFecha(torneo()!.fechaFin) }}</span>
+          <span>{{ equiposTorneo().length }} equipos</span>
+        </div>
+      </div>
+      @if (esBorrador) {
+        <button (click)="sortearTorneo()" [disabled]="sorteando()" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-golapp-green to-emerald-500 text-white hover:shadow-lg hover:shadow-golapp-green/30 transition-all disabled:opacity-50 shrink-0">
+          @if (sorteando()) { Sorteando... } @else { 🎲 Sortear e Iniciar }
+        </button>
+      }
+    </div>
+    @if (errorSorteo) { <div class="mt-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{{ errorSorteo }}</div> }
+    @if (exitoSorteo) { <div class="mt-4 px-4 py-3 rounded-xl bg-golapp-green/10 border border-golapp-green/30 text-golapp-green text-sm">{{ exitoSorteo }}</div> }
+  </div>
+</div>
+
+<div class="flex items-center gap-1 mb-6 overflow-x-auto pb-1">
+  @for (tab of tabs; track tab.value) {
+    <button (click)="setTab(tab.value)" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all" [class]="tabActivo() === tab.value ? 'bg-golapp-green text-white shadow-lg shadow-golapp-green/20' : 'text-golapp-text-muted hover:text-golapp-text hover:bg-golapp-card'">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path [attr.d]="tab.icon"/></svg> {{ tab.label }}
+    </button>
+  }
+</div>
+
+<!-- EQUIPOS -->
+@if (tabActivo() === 'equipos') {
+  <div class="flex items-center justify-between mb-5">
+    <h2 class="text-lg font-semibold text-golapp-text">Equipos Participantes</h2>
+    @if (esBorrador) {
+    <button (click)="toggleFormulario()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="mostrarFormulario() ? 'bg-golapp-card-hover text-golapp-text-muted border border-golapp-border' : 'bg-golapp-green text-white hover:bg-golapp-green-hover shadow-lg shadow-golapp-green/20'">
+      @if (mostrarFormulario()) { ✕ Cancelar } @else { + Añadir Equipo }
+    </button>
+    }
+  </div>
+  @if (mostrarFormulario()) {
+    <div class="rounded-2xl bg-golapp-card border border-golapp-green/20 p-5 mb-6">
+      @if (errorEquipo) { <div class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{{ errorEquipo }}</div> }
+      @if (equiposDisponibles.length === 0) {
+        <div class="text-center py-6">
+          <p class="text-golapp-text-muted text-sm mb-3">No tienes equipos disponibles.</p>
+          <a routerLink="/dashboard/equipos/nuevo" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-golapp-green/10 text-golapp-green border border-golapp-green/20">+ Crear equipo</a>
+        </div>
+      } @else {
+        <form [formGroup]="vincularForm" (ngSubmit)="vincularEquipo()" class="flex flex-col sm:flex-row items-end gap-4">
+          <div class="flex-1 w-full">
+            <label class="block text-xs font-medium text-golapp-text-muted mb-1.5">Selecciona un equipo</label>
+            <select formControlName="equipoId" class="w-full px-4 py-2.5 rounded-xl bg-golapp-dark border border-golapp-border text-sm text-golapp-text outline-none appearance-none">
+              <option value="" disabled>Selecciona...</option>
+              @for (eq of equiposDisponibles; track eq.id) { <option [value]="eq.id">{{ eq.nombre }}{{ eq.nombreDelegado ? ' — ' + eq.nombreDelegado : '' }}</option> }
+            </select>
+          </div>
+          <div class="flex gap-3">
+            <button type="button" (click)="toggleFormulario()" class="px-4 py-2.5 rounded-xl text-sm text-golapp-text-muted bg-golapp-dark border border-golapp-border">Cancelar</button>
+            <button type="submit" [disabled]="guardandoEquipo()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-golapp-green text-white disabled:opacity-50">
+              @if (guardandoEquipo()) { Vinculando... } @else { Vincular }
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  }
+  @if (equiposTorneo().length === 0 && !mostrarFormulario()) {
+    <div class="flex flex-col items-center justify-center py-20">
+      <div class="w-24 h-24 rounded-3xl bg-golapp-card border border-golapp-border flex items-center justify-center mb-6">
+        <svg class="w-12 h-12 text-golapp-text-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      </div>
+      <p class="text-xl font-semibold text-golapp-text mb-2">Aún no hay equipos</p>
+      <p class="text-golapp-text-muted text-sm mb-6">Añade equipos participantes para configurar la competición.</p>
+      <button (click)="toggleFormulario()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover shadow-lg shadow-golapp-green/20 transition-all">+ Añadir primer equipo</button>
+    </div>
+  }
+  @if (equiposTorneo().length > 0) {
+    <div class="rounded-2xl bg-golapp-card border border-golapp-border overflow-hidden">
+      <table class="w-full text-sm">
+        <thead><tr class="bg-golapp-dark/30"><th class="text-left py-3 px-5 text-xs font-semibold text-golapp-text-muted uppercase">Equipo</th><th class="text-left py-3 px-5 text-xs font-semibold text-golapp-text-muted uppercase">Delegado</th><th class="text-right py-3 px-5 text-xs font-semibold text-golapp-text-muted uppercase">Acciones</th></tr></thead>
+        <tbody class="divide-y divide-golapp-border/50">
+          @for (equipo of equiposTorneo(); track equipo.id) {
+            <tr class="group hover:bg-golapp-card-hover transition-colors">
+              <td class="py-4 px-5"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-golapp-green/10 border border-golapp-border flex items-center justify-center shrink-0"><svg class="w-5 h-5 text-golapp-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><span class="font-medium text-golapp-text group-hover:text-golapp-green transition-colors">{{ equipo.nombre }}</span></div></td>
+              <td class="py-4 px-5 text-golapp-text-muted">{{ equipo.nombreDelegado || '—' }}</td>
+              <td class="py-4 px-5 text-right">
+                @if (esBorrador) { <button (click)="desvincularEquipo(equipo.id)" class="px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all">Desvincular</button> }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<!-- RESUMEN -->
+@if (tabActivo() === 'resumen') {
+  <div class="rounded-2xl bg-golapp-card border border-golapp-border p-8">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="text-center p-5 rounded-xl bg-golapp-dark"><p class="text-3xl font-bold text-golapp-green mb-1">{{ equiposTorneo().length }}</p><p class="text-xs text-golapp-text-muted">Equipos</p></div>
+      <div class="text-center p-5 rounded-xl bg-golapp-dark"><p class="text-3xl font-bold text-golapp-blue mb-1">{{ partidosTorneo().length }}</p><p class="text-xs text-golapp-text-muted">Partidos</p></div>
+      <div class="text-center p-5 rounded-xl bg-golapp-dark"><p class="text-3xl font-bold text-golapp-warning mb-1">{{ torneo()!.estado || 'BORRADOR' }}</p><p class="text-xs text-golapp-text-muted">Estado</p></div>
+    </div>
+  </div>
+}
+
+<!-- CALENDARIO -->
+@if (tabActivo() === 'calendario') {
+  <div class="flex items-center justify-between mb-5">
+    <h2 class="text-lg font-semibold text-golapp-text">Calendario de Partidos</h2>
+    @if (equiposTorneo().length >= 2) {
+      <button (click)="toggleFormPartido()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="mostrarFormPartido() ? 'bg-golapp-card-hover text-golapp-text-muted border border-golapp-border' : 'bg-golapp-green text-white hover:bg-golapp-green-hover shadow-lg shadow-golapp-green/20'">
+        @if (mostrarFormPartido()) { ✕ Cancelar } @else { + Nuevo Partido }
+      </button>
+    }
+  </div>
+  @if (mostrarFormPartido()) {
+    <div class="rounded-2xl bg-golapp-card border border-golapp-green/20 p-5 mb-6">
+      @if (errorPartido) { <div class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{{ errorPartido }}</div> }
+      <form [formGroup]="partidoForm" (ngSubmit)="crearPartido()" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><label class="block text-xs font-medium text-golapp-text-muted mb-1.5">Equipo Local</label>
+            <select formControlName="equipoLocalId" class="w-full px-4 py-2.5 rounded-xl bg-golapp-dark border border-golapp-border text-sm text-golapp-text outline-none appearance-none"><option value="" disabled>Local...</option>@for (eq of equiposTorneo(); track eq.id) { <option [value]="eq.id">{{ eq.nombre }}</option> }</select></div>
+          <div><label class="block text-xs font-medium text-golapp-text-muted mb-1.5">Equipo Visitante</label>
+            <select formControlName="equipoVisitanteId" class="w-full px-4 py-2.5 rounded-xl bg-golapp-dark border border-golapp-border text-sm text-golapp-text outline-none appearance-none"><option value="" disabled>Visitante...</option>@for (eq of equiposTorneo(); track eq.id) { <option [value]="eq.id">{{ eq.nombre }}</option> }</select></div>
+        </div>
+        <div><label class="block text-xs font-medium text-golapp-text-muted mb-1.5">Fecha y Hora</label>
+          <input type="datetime-local" formControlName="fechaPartido" class="px-4 py-2.5 rounded-xl bg-golapp-dark border border-golapp-border text-sm text-golapp-text outline-none"></div>
+        <div class="flex justify-end gap-3">
+          <button type="button" (click)="toggleFormPartido()" class="px-4 py-2.5 rounded-xl text-sm text-golapp-text-muted bg-golapp-dark border border-golapp-border">Cancelar</button>
+          <button type="submit" [disabled]="guardandoPartido()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-golapp-green text-white disabled:opacity-50">@if (guardandoPartido()) { Creando... } @else { Crear Partido }</button>
+        </div>
+      </form>
+    </div>
+  }
+  @if (partidosTorneo().length === 0 && !mostrarFormPartido()) {
+    <div class="flex flex-col items-center justify-center py-20">
+      <div class="w-24 h-24 rounded-3xl bg-golapp-card border border-golapp-border flex items-center justify-center mb-6">
+        <svg class="w-12 h-12 text-golapp-text-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      </div>
+      <p class="text-xl font-semibold text-golapp-text mb-2">No hay partidos</p>
+      <p class="text-golapp-text-muted text-sm">Usa el sorteo o crea partidos manualmente.</p>
+    </div>
+  }
+  <!-- Partidos agrupados por jornada/fase -->
+  @if (partidosTorneo().length > 0) {
+    <div class="space-y-6">
+      @for (grupo of partidosPorFase; track grupo.fase) {
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="h-px flex-1 bg-golapp-border/40"></div>
+            <span class="text-xs font-bold uppercase tracking-widest text-golapp-green bg-golapp-green/10 px-3 py-1 rounded-full border border-golapp-green/20">{{ grupo.fase }}</span>
+            <div class="h-px flex-1 bg-golapp-border/40"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            @for (p of grupo.partidos; track p.id) {
+              <div class="rounded-xl bg-golapp-card border border-golapp-border p-4 hover:border-golapp-green/30 transition-all group">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 text-right"><p class="text-sm font-semibold text-golapp-text truncate group-hover:text-golapp-green transition-colors">{{ p.equipoLocal.nombre }}</p></div>
+                  
+                  @if (editandoResultadoId === p.id) {
+                    <div class="shrink-0 flex items-center gap-1 bg-golapp-dark border border-golapp-green/50 rounded-lg p-1">
+                      <input type="number" [(ngModel)]="golesLocalForm" min="0" class="w-10 text-center bg-transparent text-sm font-bold text-golapp-text outline-none hide-arrows">
+                      <span class="text-golapp-text-muted font-bold">-</span>
+                      <input type="number" [(ngModel)]="golesVisitanteForm" min="0" class="w-10 text-center bg-transparent text-sm font-bold text-golapp-text outline-none hide-arrows">
+                    </div>
+                  } @else {
+                    <div class="shrink-0 w-16 text-center py-1.5 rounded-lg bg-golapp-dark border border-golapp-border">
+                      @if (p.estado === 'FINALIZADO') { 
+                        <span class="text-sm font-bold text-golapp-text cursor-pointer hover:text-golapp-green" (click)="editarResultado(p)" title="Editar resultado">{{ p.golesLocal }} - {{ p.golesVisitante }}</span> 
+                      } @else { 
+                        <span class="text-[10px] font-bold text-golapp-text-muted cursor-pointer hover:text-golapp-green" (click)="editarResultado(p)" title="Añadir resultado">VS</span> 
+                      }
+                    </div>
+                  }
+                  
+                  <div class="flex-1"><p class="text-sm font-semibold text-golapp-text truncate group-hover:text-golapp-green transition-colors">{{ p.equipoVisitante.nombre }}</p></div>
+                </div>
+                <!-- Fecha/Resultado: modo vista o edición -->
+                @if (editandoFechaId === p.id) {
+                  <div class="flex items-center justify-center gap-2 mt-3">
+                    <input type="datetime-local" [(ngModel)]="nuevaFecha" class="px-3 py-1.5 rounded-lg bg-golapp-dark border border-golapp-green/40 text-xs text-golapp-text outline-none">
+                    <button (click)="guardarFecha(p.id)" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover transition-all">Guardar</button>
+                    <button (click)="cancelarEdicionFecha()" class="px-3 py-1.5 rounded-lg text-xs text-golapp-text-muted bg-golapp-dark border border-golapp-border hover:text-golapp-text transition-all">✕</button>
+                  </div>
+                } @else if (editandoResultadoId === p.id) {
+                  <div class="mt-4 pt-4 border-t border-golapp-border/50">
+                    <p class="text-xs font-semibold text-golapp-text-muted mb-3 text-center">Añadir Eventos (Opcional)</p>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-2 mb-3">
+                      <select [(ngModel)]="eventoJugadorId" class="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-golapp-dark border border-golapp-border text-xs text-golapp-text outline-none focus:border-golapp-green">
+                        <option [value]="0" disabled selected>Selecciona Jugador...</option>
+                        <optgroup [label]="p.equipoLocal.nombre">
+                          @for (j of jugadoresLocal(); track j.id) {
+                            <option [value]="j.id">{{ j.nombreCompleto }}</option>
+                          }
+                        </optgroup>
+                        <optgroup [label]="p.equipoVisitante.nombre">
+                          @for (j of jugadoresVisitante(); track j.id) {
+                            <option [value]="j.id">{{ j.nombreCompleto }}</option>
+                          }
+                        </optgroup>
+                      </select>
+
+                      <select [(ngModel)]="eventoTipo" class="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-golapp-dark border border-golapp-border text-xs text-golapp-text outline-none focus:border-golapp-green">
+                        <option value="GOL">⚽ Gol</option>
+                        <option value="AMARILLA">🟨 Tarjeta Amarilla</option>
+                        <option value="ROJA">🟥 Tarjeta Roja</option>
+                      </select>
+
+
+                      <button (click)="agregarEventoTemporal()" class="w-full sm:w-auto px-3 py-1.5 rounded-lg text-xs font-semibold bg-golapp-dark border border-golapp-green/30 text-golapp-green hover:bg-golapp-green/10 transition-colors whitespace-nowrap">
+                        + Añadir
+                      </button>
+                    </div>
+
+                    @if (eventosTemporales().length > 0) {
+                      <div class="mb-4 bg-golapp-dark/50 rounded-lg p-2 max-h-32 overflow-y-auto">
+                        @for (ev of eventosTemporales(); track $index) {
+                          <div class="flex items-center justify-between py-1.5 px-2 border-b border-golapp-border/50 last:border-0 text-xs">
+                            <span class="text-golapp-text truncate mr-2">
+                              @if (ev.tipoEvento === 'GOL') { ⚽ }
+                              @else if (ev.tipoEvento === 'AMARILLA') { 🟨 }
+                              @else { 🟥 }
+                              {{ getNombreJugador(ev.jugadorId) }}
+                            </span>
+                            <button (click)="eliminarEventoTemporal($index)" class="text-red-400 hover:text-red-300 transition-colors shrink-0" title="Eliminar">🗑️</button>
+                          </div>
+                        }
+                      </div>
+                    }
+
+                    <div class="flex items-center justify-center gap-2">
+                      <button (click)="guardarResultado(p.id)" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover transition-all shadow-lg shadow-golapp-green/20">Guardar Acta</button>
+                      <button (click)="cancelarEdicionResultado()" class="px-3 py-1.5 rounded-lg text-xs text-golapp-text-muted bg-golapp-dark border border-golapp-border hover:text-golapp-text transition-all">Cancelar</button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="flex items-center justify-center gap-2 mt-2.5 text-[11px]">
+                    @if (p.fechaPartido) {
+                      <span class="text-golapp-text-muted">📅 {{ formatFechaCorta(p.fechaPartido) }} · {{ formatHora(p.fechaPartido) }}</span>
+                      <button (click)="editarFecha(p)" class="text-golapp-text-muted hover:text-golapp-green transition-colors" title="Editar fecha">✏️</button>
+                    } @else {
+                      <button (click)="editarFecha(p)" class="inline-flex items-center gap-1 text-golapp-warning font-medium hover:text-golapp-green transition-colors cursor-pointer">⏰ Asignar hora</button>
+                    }
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border" [class]="getEstadoClasses(p.estado, p.fechaPartido)">{{ getEstadoLabel(p.estado, p.fechaPartido) }}</span>
+                    @if (p.estado !== 'FINALIZADO' && partidoYaPasado(p.fechaPartido)) {
+                      <button (click)="editarResultado(p)" class="ml-1 px-2 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/50 hover:bg-orange-500/30 transition-colors cursor-pointer text-[9px] font-bold uppercase">
+                        + Añadir
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+}
+
+<!-- CLASIFICACIÓN -->
+@if (tabActivo() === 'clasificacion') {
+  @if (torneo()!.tipoTorneo === 'LIGA') {
+    @if (clasificacion().length === 0) {
+      <div class="flex flex-col items-center justify-center py-20"><p class="text-lg font-semibold text-golapp-text mb-2">Sin datos</p><p class="text-golapp-text-muted text-sm">Genera el calendario y registra resultados.</p></div>
+    } @else {
+      <div class="rounded-2xl bg-golapp-card border border-golapp-border overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-slate-800/60">
+            <th class="py-3 px-3 text-center text-xs font-bold text-golapp-text-muted uppercase w-12">Pos</th>
+            <th class="py-3 px-4 text-left text-xs font-bold text-golapp-text-muted uppercase">Equipo</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">PJ</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">G</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">E</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">D</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">GF</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">GC</th>
+            <th class="py-3 px-2 text-center text-xs font-bold text-golapp-text-muted uppercase">DG</th>
+            <th class="py-3 px-3 text-center text-xs font-bold text-golapp-text-muted uppercase">PTS</th>
+          </tr></thead>
+          <tbody class="divide-y divide-golapp-border/30">
+            @for (row of clasificacion(); track row.equipoId; let i = $index) {
+              <tr class="hover:bg-golapp-card-hover transition-colors" [class]="i < 3 ? 'border-l-2' : ''" [style]="i===0?'border-left-color:#facc15':i===1?'border-left-color:#94a3b8':i===2?'border-left-color:#d97706':''">
+                <td class="py-3 px-3 text-center font-bold" [class]="getPosClasses(i)">{{ i + 1 }}</td>
+                <td class="py-3 px-4 font-medium text-golapp-text">{{ row.equipoNombre }}</td>
+                <td class="py-3 px-2 text-center text-golapp-text-muted">{{ row.partidosJugados }}</td>
+                <td class="py-3 px-2 text-center text-golapp-green">{{ row.victorias }}</td>
+                <td class="py-3 px-2 text-center text-golapp-text-muted">{{ row.empates }}</td>
+                <td class="py-3 px-2 text-center text-red-400">{{ row.derrotas }}</td>
+                <td class="py-3 px-2 text-center text-golapp-text-muted">{{ row.golesAFavor }}</td>
+                <td class="py-3 px-2 text-center text-golapp-text-muted">{{ row.golesEnContra }}</td>
+                <td class="py-3 px-2 text-center" [class]="row.diferenciaGoles>0?'text-golapp-green':row.diferenciaGoles<0?'text-red-400':'text-golapp-text-muted'">{{ row.diferenciaGoles>0?'+':'' }}{{ row.diferenciaGoles }}</td>
+                <td class="py-3 px-3 text-center font-bold text-golapp-text text-base">{{ row.puntos }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+  @if (torneo()!.tipoTorneo === 'ELIMINATORIA') {
+    @if (bracketFases.length === 0) {
+      <div class="flex flex-col items-center justify-center py-20">
+        <div class="w-24 h-24 rounded-3xl bg-golapp-card border border-golapp-border flex items-center justify-center mb-6">
+          <svg class="w-12 h-12 text-golapp-text-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        </div>
+        <p class="text-lg font-semibold text-golapp-text mb-2">Sin bracket disponible</p>
+        <p class="text-golapp-text-muted text-sm">Genera el calendario para ver el cuadro de eliminatoria.</p>
+      </div>
+    } @else {
+      <div class="bracket-symmetric">
+
+        <!-- ═══ COLUMNA IZQUIERDA (primera mitad) ═══ -->
+        <div class="bracket-col bracket-col-left">
+          <span class="bracket-round-label">{{ primeraFase }}</span>
+          @for (p of bracketIzquierdo; track p.id) {
+            <div class="bracket-card">
+              <div class="bracket-row" [class.winner]="p.estado === 'FINALIZADO' && p.golesLocal > p.golesVisitante">
+                <span class="bracket-name">{{ p.equipoLocal.nombre }}</span>
+                <span class="bracket-score" [class]="p.estado === 'FINALIZADO' ? 'played' : 'pending'">{{ p.estado === 'FINALIZADO' ? p.golesLocal : '–' }}</span>
+              </div>
+              <div class="bracket-row" [class.winner]="p.estado === 'FINALIZADO' && p.golesVisitante > p.golesLocal">
+                <span class="bracket-name">{{ p.equipoVisitante.nombre }}</span>
+                <span class="bracket-score" [class]="p.estado === 'FINALIZADO' ? 'played' : 'pending'">{{ p.estado === 'FINALIZADO' ? p.golesVisitante : '–' }}</span>
+              </div>
+              <div class="bracket-status" [class.done]="p.estado === 'FINALIZADO'">{{ p.estado === 'FINALIZADO' ? '✓ Finalizado' : 'Pendiente' }}</div>
+            </div>
+          }
+        </div>
+
+        <!-- ═══ CENTRO (rondas intermedias + final) ═══ -->
+        <div class="bracket-center">
+          @for (ronda of rondasIntermedias; track ronda.fase) {
+            <span class="bracket-round-label">{{ ronda.fase }}</span>
+            @for (p of ronda.partidos; track p.id) {
+              <div class="bracket-card bracket-card-final">
+                <div class="bracket-row" [class.winner]="p.estado === 'FINALIZADO' && p.golesLocal > p.golesVisitante">
+                  <span class="bracket-name">{{ p.equipoLocal.nombre }}</span>
+                  <span class="bracket-score" [class]="p.estado === 'FINALIZADO' ? 'played' : 'pending'">{{ p.estado === 'FINALIZADO' ? p.golesLocal : '–' }}</span>
+                </div>
+                <div class="bracket-row" [class.winner]="p.estado === 'FINALIZADO' && p.golesVisitante > p.golesLocal">
+                  <span class="bracket-name">{{ p.equipoVisitante.nombre }}</span>
+                  <span class="bracket-score" [class]="p.estado === 'FINALIZADO' ? 'played' : 'pending'">{{ p.estado === 'FINALIZADO' ? p.golesVisitante : '–' }}</span>
+                </div>
+                <div class="bracket-status" [class.done]="p.estado === 'FINALIZADO'">{{ p.estado === 'FINALIZADO' ? '✓ Finalizado' : 'Pendiente' }}</div>
+              </div>
+            }
+          }
+          @if (rondasIntermedias.length === 0) {
+            <div class="bracket-trophy">🏆</div>
+            <span class="text-xs text-golapp-text-muted">Final</span>
+          }
+        </div>
+
+        <!-- ═══ COLUMNA DERECHA (segunda mitad) ═══ -->
+        <div class="bracket-col bracket-col-right">
+          <span class="bracket-round-label">{{ primeraFase }}</span>
+          @for (p of bracketDerecho; track p.id) {
+            <div class="bracket-card">
+              <div class="bracket-row" [class.winner]="p.estado === 'FINALIZADO' && p.golesLocal > p.golesVisitante">
+                <span class="bracket-name">{{ p.equipoLocal.nombre }}</span>
+                <span class="bracket-score" [class]="p.estado === 'FINALIZADO' ? 'played' : 'pending'">{{ p.estado === 'FINALIZADO' ? p.golesLocal : '–' }}</span>
+              </div>
+              <div class="bracket-row" [class.winner]="p.estado === 'FINALIZADO' && p.golesVisitante > p.golesLocal">
+                <span class="bracket-name">{{ p.equipoVisitante.nombre }}</span>
+                <span class="bracket-score" [class]="p.estado === 'FINALIZADO' ? 'played' : 'pending'">{{ p.estado === 'FINALIZADO' ? p.golesVisitante : '–' }}</span>
+              </div>
+              <div class="bracket-status" [class.done]="p.estado === 'FINALIZADO'">{{ p.estado === 'FINALIZADO' ? '✓ Finalizado' : 'Pendiente' }}</div>
+            </div>
+          }
+        </div>
+
+      </div>
+    }
+  }
+}
+}

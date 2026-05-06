@@ -1,0 +1,35 @@
+<div class="min-h-screen bg-golapp-dark flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+
+    <!-- Logo -->
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-golapp-green/10 border border-golapp-green/20 flex items-center justify-center">
+          <svg class="w-7 h-7 text-golapp-green" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </div>
+      </div>
+      <h1 class="text-3xl font-extrabold text-golapp-text tracking-tight">GOL<span class="text-golapp-green">APP</span></h1>
+      <p class="text-sm text-golapp-text-muted mt-2">Portal del Participante</p>
+    </div>
+
+    <!-- Card -->
+    <div class="rounded-2xl bg-golapp-card border border-golapp-border p-8">
+      <h2 class="text-lg font-bold text-golapp-text text-center mb-2">Accede a tu equipo</h2>
+      <p class="text-sm text-golapp-text-muted text-center mb-8">Introduce el código que te proporcionó tu organizador</p>
+
+      @if (error) {
+        <div class="mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium text-center">{{ error }}</div>
+      }
+
+      <div class="space-y-4">
+        <input [(ngModel)]="codigo" (keyup.enter)="acceder()" type="text" placeholder="Ej: RM2024" maxlength="8" class="w-full px-5 py-4 rounded-xl bg-golapp-dark border border-golapp-border text-center text-2xl font-bold text-golapp-text tracking-[0.3em] uppercase outline-none focus:border-golapp-green/50 transition-colors placeholder:text-golapp-text-muted/30 placeholder:text-lg placeholder:tracking-normal placeholder:font-normal">
+
+        <button (click)="acceder()" [disabled]="cargando()" class="w-full py-3.5 rounded-xl text-sm font-bold bg-golapp-green text-white hover:bg-golapp-green-hover disabled:opacity-50 shadow-lg shadow-golapp-green/20 transition-all">
+          @if (cargando()) { <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Verificando...</span> } @else { Acceder }
+        </button>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-golapp-text-muted mt-6">¿Eres organizador? <a href="/login" class="text-golapp-green hover:underline font-medium">Inicia sesión aquí</a></p>
+  </div>
+</div>

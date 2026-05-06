@@ -1,0 +1,52 @@
+/* ════════════════════════════════════════════════
+   GOLAPP — Nuevo Torneo · Estilos
+   ════════════════════════════════════════════════ */
+
+/* ── Input base para todos los campos ────────── */
+.nuevo-torneo-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #F1F5F9;
+  background-color: #0F172A;
+  border: 1px solid #334155;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nuevo-torneo-input::placeholder {
+  color: #94A3B8;
+}
+
+.nuevo-torneo-input:focus {
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.nuevo-torneo-input.border-golapp-danger {
+  border-color: #EF4444;
+}
+
+.nuevo-torneo-input.border-golapp-danger:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* ── Select: quitar flecha nativa ────────────── */
+select.nuevo-torneo-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* ── Date inputs: color del icono nativo ─────── */
+input[type="date"].nuevo-torneo-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+/* ── Textarea ────────────────────────────────── */
+textarea.nuevo-torneo-input {
+  resize: none;
+}

@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+/* Ocultar scrollbar horizontal en los tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

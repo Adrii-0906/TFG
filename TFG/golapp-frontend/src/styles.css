@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════
+   GOLAPP — Design System (Tailwind CSS v4)
+   ════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Colores de marca GOLAPP ── */
+  --color-golapp-dark: #0F172A;
+  --color-golapp-card: #1E293B;
+  --color-golapp-card-hover: #273548;
+  --color-golapp-border: #334155;
+  --color-golapp-green: #10B981;
+  --color-golapp-green-hover: #059669;
+  --color-golapp-blue: #3B82F6;
+  --color-golapp-blue-hover: #2563EB;
+  --color-golapp-text: #F1F5F9;
+  --color-golapp-text-muted: #94A3B8;
+  --color-golapp-danger: #EF4444;
+  --color-golapp-warning: #F59E0B;
+
+  /* ── Tipografía ── */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Estilos base globales ── */
+body {
+  @apply bg-golapp-dark text-golapp-text font-sans antialiased;
+  min-height: 100vh;
+}
+
+/* ── Scrollbar personalizada (modo oscuro) ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ── Transiciones suaves globales ── */
+* {
+  transition-property: background-color, border-color, color, opacity, box-shadow, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}

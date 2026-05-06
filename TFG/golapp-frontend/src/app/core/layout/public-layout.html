@@ -1,0 +1,62 @@
+<!-- ════════════════════════════════════════════════
+     GOLAPP — Public Layout (Navbar + Content)
+     ════════════════════════════════════════════════ -->
+
+<div class="min-h-screen flex flex-col">
+
+  <!-- ── NAVBAR SUPERIOR ────────────────────────── -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-golapp-dark/80 border-b border-golapp-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center gap-3 group">
+          <img src="/assets/logo.png" alt="GOLAPP Logo" class="h-8 w-auto">
+          <span class="text-xl font-bold tracking-tight">
+            <span class="text-golapp-green">GOL</span><span class="text-golapp-text">APP</span>
+          </span>
+        </a>
+
+        <!-- Links de navegación -->
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="#features" class="px-4 py-2 rounded-lg text-sm font-medium text-golapp-text-muted hover:text-golapp-text hover:bg-golapp-card-hover transition-colors">
+            Funcionalidades
+          </a>
+          <a href="#how-it-works" class="px-4 py-2 rounded-lg text-sm font-medium text-golapp-text-muted hover:text-golapp-text hover:bg-golapp-card-hover transition-colors">
+            Cómo funciona
+          </a>
+        </nav>
+
+        <!-- Botones de acción -->
+        <div class="flex items-center gap-3">
+          <a routerLink="/login" class="px-4 py-2 rounded-lg text-sm font-medium text-golapp-text-muted hover:text-golapp-text hover:bg-golapp-card-hover transition-colors">
+            Iniciar Sesión
+          </a>
+          <a routerLink="/registro" class="px-5 py-2 rounded-lg text-sm font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover shadow-lg shadow-golapp-green/20 hover:shadow-golapp-green/30 transition-all">
+            Registrarse
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── CONTENIDO ──────────────────────────────── -->
+  <main class="flex-1">
+    <router-outlet />
+  </main>
+
+  <!-- ── FOOTER ─────────────────────────────────── -->
+  <footer class="border-t border-golapp-border bg-golapp-card">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold">
+            <span class="text-golapp-green">GOL</span><span class="text-golapp-text">APP</span>
+          </span>
+          <span class="text-golapp-text-muted text-sm">· Gestión de Torneos de Fútbol Amateur</span>
+        </div>
+        <p class="text-xs text-golapp-text-muted">© 2026 GOLAPP — TFG Desarrollo de Aplicaciones Multiplataforma</p>
+      </div>
+    </div>
+  </footer>
+</div>

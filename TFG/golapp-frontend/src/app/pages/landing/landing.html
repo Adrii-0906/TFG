@@ -1,0 +1,218 @@
+<!-- ════════════════════════════════════════════════
+     GOLAPP — Landing Page
+     ════════════════════════════════════════════════ -->
+
+<!-- ── HERO SECTION ─────────────────────────────── -->
+<section class="relative overflow-hidden">
+  <!-- Fondo con gradiente y efectos -->
+  <div class="absolute inset-0 bg-gradient-to-br from-golapp-green/5 via-golapp-dark to-golapp-blue/5"></div>
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-golapp-green/10 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-golapp-blue/10 rounded-full blur-3xl"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+    <div class="text-center max-w-3xl mx-auto">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-golapp-green/10 border border-golapp-green/20 mb-8">
+        <span class="w-2 h-2 rounded-full bg-golapp-green animate-pulse"></span>
+        <span class="text-sm font-medium text-golapp-green">Plataforma en tiempo real</span>
+      </div>
+
+      <!-- Título principal -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+        Gestiona tus torneos
+        <span class="block bg-gradient-to-r from-golapp-green to-golapp-blue bg-clip-text text-transparent">
+          de fútbol amateur
+        </span>
+      </h1>
+
+      <!-- Subtítulo -->
+      <p class="text-lg sm:text-xl text-golapp-text-muted leading-relaxed mb-10 max-w-2xl mx-auto">
+        Genera calendarios automáticos, registra resultados y consulta clasificaciones en tiempo real.
+        Todo centralizado en una sola plataforma.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a routerLink="/registro" class="w-full sm:w-auto px-8 py-3.5 rounded-xl text-base font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover shadow-xl shadow-golapp-green/25 hover:shadow-golapp-green/40 hover:-translate-y-0.5 transition-all">
+          Crear cuenta gratis
+        </a>
+        <a routerLink="/dashboard" class="w-full sm:w-auto px-8 py-3.5 rounded-xl text-base font-semibold bg-golapp-card text-golapp-text border border-golapp-border hover:bg-golapp-card-hover hover:border-golapp-green/30 hover:-translate-y-0.5 transition-all">
+          Ver demo →
+        </a>
+      </div>
+      <div class="mt-4">
+        <a routerLink="/entrar" class="text-sm text-golapp-text-muted hover:text-golapp-green transition-colors">
+          🎮 ¿Eres jugador? <span class="font-semibold text-golapp-green">Accede con tu código de equipo</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES SECTION ─────────────────────────── -->
+<section id="features" class="py-20 lg:py-28">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Encabezado -->
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+        Todo lo que necesitas para
+        <span class="text-golapp-green">organizar torneos</span>
+      </h2>
+      <p class="text-golapp-text-muted text-lg">
+        Olvídate de las hojas de cálculo. GOLAPP automatiza todo el proceso.
+      </p>
+    </div>
+
+    <!-- Grid de features -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Feature 1: Calendario automático -->
+      <div class="group p-6 rounded-2xl bg-golapp-card border border-golapp-border hover:border-golapp-green/30 hover:shadow-xl hover:shadow-golapp-green/5 transition-all duration-300">
+        <div class="w-12 h-12 rounded-xl bg-golapp-green/10 flex items-center justify-center mb-4 group-hover:bg-golapp-green/20 transition-colors">
+          <svg class="w-6 h-6 text-golapp-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Calendario Automático</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Genera automáticamente el calendario de partidos con el algoritmo Round-Robin. Sin errores, sin duplicados.
+        </p>
+      </div>
+
+      <!-- Feature 2: Clasificación en tiempo real -->
+      <div class="group p-6 rounded-2xl bg-golapp-card border border-golapp-border hover:border-golapp-blue/30 hover:shadow-xl hover:shadow-golapp-blue/5 transition-all duration-300">
+        <div class="w-12 h-12 rounded-xl bg-golapp-blue/10 flex items-center justify-center mb-4 group-hover:bg-golapp-blue/20 transition-colors">
+          <svg class="w-6 h-6 text-golapp-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Clasificación en Tiempo Real</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          La tabla se actualiza automáticamente al registrar cada resultado. Puntos, goles y diferencia calculados al instante.
+        </p>
+      </div>
+
+      <!-- Feature 3: Gestión de equipos -->
+      <div class="group p-6 rounded-2xl bg-golapp-card border border-golapp-border hover:border-golapp-green/30 hover:shadow-xl hover:shadow-golapp-green/5 transition-all duration-300">
+        <div class="w-12 h-12 rounded-xl bg-golapp-green/10 flex items-center justify-center mb-4 group-hover:bg-golapp-green/20 transition-colors">
+          <svg class="w-6 h-6 text-golapp-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Gestión de Equipos</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Registra equipos, jugadores y sus datos en un sistema centralizado. Todo organizado y accesible.
+        </p>
+      </div>
+
+      <!-- Feature 4: Roles y seguridad -->
+      <div class="group p-6 rounded-2xl bg-golapp-card border border-golapp-border hover:border-golapp-blue/30 hover:shadow-xl hover:shadow-golapp-blue/5 transition-all duration-300">
+        <div class="w-12 h-12 rounded-xl bg-golapp-blue/10 flex items-center justify-center mb-4 group-hover:bg-golapp-blue/20 transition-colors">
+          <svg class="w-6 h-6 text-golapp-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Roles y Seguridad</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Control de acceso por roles: Organizadores gestionan, Participantes consultan. Datos protegidos y transparentes.
+        </p>
+      </div>
+
+      <!-- Feature 5: Múltiples formatos -->
+      <div class="group p-6 rounded-2xl bg-golapp-card border border-golapp-border hover:border-golapp-green/30 hover:shadow-xl hover:shadow-golapp-green/5 transition-all duration-300">
+        <div class="w-12 h-12 rounded-xl bg-golapp-green/10 flex items-center justify-center mb-4 group-hover:bg-golapp-green/20 transition-colors">
+          <svg class="w-6 h-6 text-golapp-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm12 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Liga y Eliminatoria</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Soporte para formato Liga (todos contra todos) y Eliminatoria (brackets). Tú eliges el formato.
+        </p>
+      </div>
+
+      <!-- Feature 6: Responsive -->
+      <div class="group p-6 rounded-2xl bg-golapp-card border border-golapp-border hover:border-golapp-blue/30 hover:shadow-xl hover:shadow-golapp-blue/5 transition-all duration-300">
+        <div class="w-12 h-12 rounded-xl bg-golapp-blue/10 flex items-center justify-center mb-4 group-hover:bg-golapp-blue/20 transition-colors">
+          <svg class="w-6 h-6 text-golapp-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Accede desde Cualquier Dispositivo</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Diseño responsive. Consulta clasificaciones, resultados y calendarios desde tu móvil, tablet o PC.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ──────────────────────────────── -->
+<section id="how-it-works" class="py-20 lg:py-28 bg-golapp-card/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+        Cómo funciona
+        <span class="text-golapp-blue">GOLAPP</span>
+      </h2>
+      <p class="text-golapp-text-muted text-lg">
+        En solo 3 pasos tendrás tu torneo en marcha
+      </p>
+    </div>
+
+    <!-- Pasos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+
+      <!-- Paso 1 -->
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-golapp-green to-golapp-green-hover text-white text-2xl font-bold mb-6 shadow-lg shadow-golapp-green/25">
+          1
+        </div>
+        <h3 class="text-lg font-semibold mb-3">Crea tu Torneo</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Define el nombre, formato (Liga o Eliminatoria) y registra los equipos participantes con sus jugadores.
+        </p>
+      </div>
+
+      <!-- Paso 2 -->
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-golapp-blue to-golapp-blue-hover text-white text-2xl font-bold mb-6 shadow-lg shadow-golapp-blue/25">
+          2
+        </div>
+        <h3 class="text-lg font-semibold mb-3">Genera el Calendario</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Con un clic, el sistema genera todos los enfrentamientos automáticamente. Sin errores, sin duplicados.
+        </p>
+      </div>
+
+      <!-- Paso 3 -->
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-golapp-green to-golapp-blue text-white text-2xl font-bold mb-6 shadow-lg shadow-golapp-green/25">
+          3
+        </div>
+        <h3 class="text-lg font-semibold mb-3">Registra Resultados</h3>
+        <p class="text-sm text-golapp-text-muted leading-relaxed">
+          Introduce los goles de cada partido y la clasificación se actualiza automáticamente en tiempo real.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA FINAL ────────────────────────────────── -->
+<section class="py-20 lg:py-28">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl sm:text-4xl font-bold mb-6">
+      ¿Listo para organizar tu
+      <span class="bg-gradient-to-r from-golapp-green to-golapp-blue bg-clip-text text-transparent">primer torneo</span>?
+    </h2>
+    <p class="text-lg text-golapp-text-muted mb-10 max-w-2xl mx-auto">
+      Únete a GOLAPP y empieza a gestionar tus ligas de forma profesional, automatizada y sin errores.
+    </p>
+    <a routerLink="/registro" class="inline-flex px-10 py-4 rounded-xl text-lg font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover shadow-xl shadow-golapp-green/25 hover:shadow-golapp-green/40 hover:-translate-y-0.5 transition-all">
+      Empezar ahora — Es gratis
+    </a>
+  </div>
+</section>

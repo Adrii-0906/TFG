@@ -1,0 +1,107 @@
+@if (cargando()) {
+<div class="min-h-screen bg-golapp-dark flex items-center justify-center">
+  <svg class="w-10 h-10 text-golapp-green animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+</div>
+}
+
+@if (!cargando() && equipo()) {
+<div class="min-h-screen bg-golapp-dark">
+
+  <!-- HEADER -->
+  <div class="bg-golapp-card border-b border-golapp-border">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-golapp-green/10 border border-golapp-green/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-golapp-green" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-golapp-text">{{ equipo()!.nombre }}</h1>
+          <p class="text-[11px] text-golapp-text-muted">Portal del Participante</p>
+        </div>
+      </div>
+      <button (click)="salir()" class="px-4 py-2 rounded-xl text-xs font-semibold text-golapp-text-muted bg-golapp-dark border border-golapp-border hover:text-red-400 hover:border-red-500/30 transition-all">
+        Salir
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="max-w-4xl mx-auto px-4 mt-6">
+    <div class="flex gap-1 bg-golapp-card rounded-xl p-1 border border-golapp-border w-fit">
+      <button (click)="setTab('partidos')" class="px-5 py-2 rounded-lg text-sm font-medium transition-all" [class]="tab() === 'partidos' ? 'bg-golapp-green text-white shadow' : 'text-golapp-text-muted hover:text-golapp-text'">Mis Partidos</button>
+      <button (click)="setTab('plantilla')" class="px-5 py-2 rounded-lg text-sm font-medium transition-all" [class]="tab() === 'plantilla' ? 'bg-golapp-green text-white shadow' : 'text-golapp-text-muted hover:text-golapp-text'">Plantilla</button>
+    </div>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="max-w-4xl mx-auto px-4 mt-6 pb-12">
+
+    <!-- MIS PARTIDOS -->
+    @if (tab() === 'partidos') {
+      @if (partidos().length === 0) {
+        <div class="flex flex-col items-center justify-center py-20">
+          <p class="text-lg font-semibold text-golapp-text mb-2">Sin partidos</p>
+          <p class="text-golapp-text-muted text-sm">Aún no hay partidos programados para tu equipo.</p>
+        </div>
+      } @else {
+        <div class="space-y-3">
+          @for (p of partidos(); track p.id) {
+            <div class="rounded-xl bg-golapp-card border border-golapp-border p-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-1 text-right"><p class="text-sm font-semibold text-golapp-text truncate">{{ p.equipoLocal.nombre }}</p></div>
+                <div class="shrink-0 w-16 text-center py-1.5 rounded-lg bg-golapp-dark border border-golapp-border">
+                  @if (p.estado === 'FINALIZADO') {
+                    <span class="text-sm font-bold text-golapp-text">{{ p.golesLocal }} - {{ p.golesVisitante }}</span>
+                  } @else {
+                    <span class="text-[10px] font-bold text-golapp-text-muted">VS</span>
+                  }
+                </div>
+                <div class="flex-1"><p class="text-sm font-semibold text-golapp-text truncate">{{ p.equipoVisitante.nombre }}</p></div>
+              </div>
+              <div class="flex items-center justify-center gap-2 mt-2.5 text-[11px]">
+                @if (p.fase) { <span class="text-golapp-text-muted font-medium">{{ p.fase }} ·</span> }
+                @if (p.fechaPartido) {
+                  <span class="text-golapp-text-muted">📅 {{ formatFecha(p.fechaPartido) }} · {{ formatHora(p.fechaPartido) }}</span>
+                } @else {
+                  <span class="text-golapp-warning">⏰ Sin fecha</span>
+                }
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border" [class]="getEstadoClasses(p.estado)">{{ p.estado }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- PLANTILLA -->
+    @if (tab() === 'plantilla') {
+      @if (jugadores().length === 0) {
+        <div class="flex flex-col items-center justify-center py-20">
+          <p class="text-lg font-semibold text-golapp-text mb-2">Sin jugadores</p>
+          <p class="text-golapp-text-muted text-sm">La plantilla aún no ha sido configurada.</p>
+        </div>
+      } @else {
+        <div class="rounded-2xl bg-golapp-card border border-golapp-border overflow-hidden">
+          <table class="w-full">
+            <thead><tr class="border-b border-golapp-border bg-golapp-dark/50">
+              <th class="py-3 px-4 text-left text-[10px] font-bold text-golapp-text-muted uppercase">#</th>
+              <th class="py-3 px-4 text-left text-[10px] font-bold text-golapp-text-muted uppercase">Jugador</th>
+              <th class="py-3 px-4 text-center text-[10px] font-bold text-golapp-text-muted uppercase">Posición</th>
+            </tr></thead>
+            <tbody>
+              @for (j of jugadores(); track j.id) {
+                <tr class="border-b border-golapp-border/30 hover:bg-golapp-card-hover transition-colors">
+                  <td class="py-3 px-4 text-sm font-bold text-golapp-green">{{ j.dorsal }}</td>
+                  <td class="py-3 px-4 text-sm text-golapp-text font-medium">{{ j.nombreCompleto }}</td>
+                  <td class="py-3 px-4 text-center text-xs text-golapp-text-muted">{{ posicionLabel(j.posicion) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+  </div>
+</div>
+}

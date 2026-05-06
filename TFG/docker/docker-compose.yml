@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # ──────────────────────────────────────────────
+  # PostgreSQL 15
+  # ──────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: golapp_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: golapp_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5435:5432"
+    volumes:
+      - golapp_pgdata:/var/lib/postgresql/data
+    networks:
+      - golapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d golapp_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────
+  # pgAdmin 4
+  # ──────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: golapp_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@golapp.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - golapp_network
+
+volumes:
+  golapp_pgdata:
+    driver: local
+
+networks:
+  golapp_network:
+    driver: bridge

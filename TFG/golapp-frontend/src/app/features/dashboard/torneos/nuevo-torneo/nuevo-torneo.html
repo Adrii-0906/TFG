@@ -1,0 +1,230 @@
+<!-- ════════════════════════════════════════════════
+     GOLAPP — Crear Nuevo Torneo
+     ════════════════════════════════════════════════ -->
+
+<div class="min-h-[calc(100vh-5rem)] flex items-start justify-center py-8 px-4">
+  <div class="w-full max-w-2xl">
+
+    <!-- ── Cabecera ─────────────────────────────────── -->
+    <div class="mb-8">
+      <a routerLink="/dashboard/torneos"
+         class="inline-flex items-center gap-2 text-sm text-golapp-text-muted hover:text-golapp-green transition-colors mb-4">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M15 19l-7-7 7-7"/>
+        </svg>
+        Volver a Mis Torneos
+      </a>
+      <h1 class="text-2xl sm:text-3xl font-bold text-golapp-text">Crear Nuevo Torneo</h1>
+      <p class="text-golapp-text-muted mt-2">Configura los datos básicos de tu competición. Podrás añadir equipos después.</p>
+    </div>
+
+    <!-- ── Tarjeta del formulario ───────────────────── -->
+    <div class="rounded-2xl bg-golapp-card border border-golapp-border shadow-xl overflow-hidden">
+
+      <!-- ── Mensaje de error ──────────────────────── -->
+      @if (errorMsg) {
+        <div class="mx-6 mt-6 flex items-center gap-3 px-4 py-3 rounded-xl bg-golapp-danger/10 border border-golapp-danger/20">
+          <svg class="w-5 h-5 text-golapp-danger shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="text-sm text-golapp-danger font-medium">{{ errorMsg }}</span>
+        </div>
+      }
+
+      <!-- ── Formulario ────────────────────────────── -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
+
+        <!-- Nombre del torneo -->
+        <div>
+          <label for="nombre" class="block text-sm font-semibold text-golapp-text mb-2">
+            Nombre del torneo <span class="text-golapp-danger">*</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-golapp-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+            </div>
+            <input
+              id="nombre"
+              formControlName="nombre"
+              type="text"
+              placeholder="Ej: Liga Primavera 2026"
+              class="nuevo-torneo-input pl-12"
+              [class.border-golapp-danger]="campo('nombre').touched && campo('nombre').invalid">
+          </div>
+          @if (campo('nombre').touched && campo('nombre').hasError('required')) {
+            <p class="mt-1.5 text-xs text-golapp-danger">El nombre es obligatorio</p>
+          }
+          @if (campo('nombre').touched && campo('nombre').hasError('maxlength')) {
+            <p class="mt-1.5 text-xs text-golapp-danger">Máximo 100 caracteres</p>
+          }
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label for="descripcion" class="block text-sm font-semibold text-golapp-text mb-2">
+            Descripción <span class="text-golapp-danger">*</span>
+          </label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            rows="4"
+            placeholder="Describe brevemente el torneo, reglas principales, lugar de celebración..."
+            class="nuevo-torneo-input resize-none"
+            [class.border-golapp-danger]="campo('descripcion').touched && campo('descripcion').invalid">
+          </textarea>
+          <div class="flex items-center justify-between mt-1.5">
+            @if (campo('descripcion').touched && campo('descripcion').hasError('required')) {
+              <p class="text-xs text-golapp-danger">La descripción es obligatoria</p>
+            } @else {
+              <span></span>
+            }
+            <span class="text-xs text-golapp-text-muted">
+              {{ campo('descripcion').value?.length || 0 }} / 500
+            </span>
+          </div>
+        </div>
+
+        <!-- Imagen de Fondo (Cartel) -->
+        <div>
+          <label class="block text-sm font-semibold text-golapp-text mb-2">
+            Cartel o Fondo del torneo <span class="text-xs text-golapp-text-muted font-normal">(Opcional)</span>
+          </label>
+          <div class="flex items-center gap-4">
+            <div class="relative w-24 h-16 rounded-xl border-2 border-dashed border-golapp-border bg-golapp-dark overflow-hidden flex items-center justify-center shrink-0">
+              @if (fondoUrl()) {
+                <img [src]="fondoUrl()" class="absolute inset-0 w-full h-full object-cover">
+              } @else {
+                <svg class="w-6 h-6 text-golapp-text-muted/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              }
+            </div>
+            <div class="flex-1">
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput hidden>
+              <button type="button" (click)="fileInput.click()" class="px-4 py-2 rounded-xl text-sm font-semibold bg-golapp-card-hover border border-golapp-border hover:bg-golapp-dark transition-colors">
+                Seleccionar Imagen
+              </button>
+              <p class="text-xs text-golapp-text-muted mt-2">Recomendado: 1200x400px o similar. Formatos JPG, PNG.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tipo de torneo -->
+        <div>
+          <label for="tipoTorneo" class="block text-sm font-semibold text-golapp-text mb-2">
+            Tipo de torneo <span class="text-golapp-danger">*</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-golapp-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 6h16M4 12h8m-8 6h16"/>
+              </svg>
+            </div>
+            <select
+              id="tipoTorneo"
+              formControlName="tipoTorneo"
+              class="nuevo-torneo-input pl-12 appearance-none cursor-pointer"
+              [class.border-golapp-danger]="campo('tipoTorneo').touched && campo('tipoTorneo').invalid"
+              [class.text-golapp-text-muted]="!campo('tipoTorneo').value">
+              <option value="" disabled>Selecciona un formato</option>
+              <option value="LIGA">Liga — Todos contra todos</option>
+              <option value="ELIMINATORIA">Eliminatoria — Fases directas</option>
+            </select>
+            <!-- Chevron -->
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-golapp-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
+          @if (campo('tipoTorneo').touched && campo('tipoTorneo').hasError('required')) {
+            <p class="mt-1.5 text-xs text-golapp-danger">Selecciona el tipo de torneo</p>
+          }
+        </div>
+
+        <!-- Fechas (en fila) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <!-- Fecha Inicio -->
+          <div>
+            <label for="fechaInicio" class="block text-sm font-semibold text-golapp-text mb-2">
+              Fecha de inicio <span class="text-golapp-danger">*</span>
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-golapp-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <input
+                id="fechaInicio"
+                formControlName="fechaInicio"
+                type="date"
+                [min]="fechaMinima"
+                class="nuevo-torneo-input pl-12"
+                [class.border-golapp-danger]="campo('fechaInicio').touched && campo('fechaInicio').invalid">
+            </div>
+            @if (campo('fechaInicio').touched && campo('fechaInicio').hasError('required')) {
+              <p class="mt-1.5 text-xs text-golapp-danger">La fecha de inicio es obligatoria</p>
+            }
+          </div>
+
+          <!-- Fecha Fin -->
+          <div>
+            <label for="fechaFin" class="block text-sm font-semibold text-golapp-text mb-2">
+              Fecha de fin <span class="text-golapp-danger">*</span>
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-golapp-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <input
+                id="fechaFin"
+                formControlName="fechaFin"
+                type="date"
+                [min]="campo('fechaInicio').value || fechaMinima"
+                class="nuevo-torneo-input pl-12"
+                [class.border-golapp-danger]="campo('fechaFin').touched && campo('fechaFin').invalid">
+            </div>
+            @if (campo('fechaFin').touched && campo('fechaFin').hasError('required')) {
+              <p class="mt-1.5 text-xs text-golapp-danger">La fecha de fin es obligatoria</p>
+            }
+          </div>
+        </div>
+
+        <!-- ── Separador ────────────────────────────── -->
+        <div class="border-t border-golapp-border"></div>
+
+        <!-- ── Botones de acción ─────────────────────── -->
+        <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3">
+          <a
+            routerLink="/dashboard/torneos"
+            class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-semibold text-golapp-text-muted bg-golapp-card-hover border border-golapp-border hover:text-golapp-text hover:border-golapp-text-muted/30 transition-all">
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            [disabled]="cargando"
+            class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold bg-golapp-green text-white hover:bg-golapp-green-hover shadow-lg shadow-golapp-green/20 hover:shadow-golapp-green/30 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
+            @if (cargando) {
+              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+              Guardando...
+            } @else {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+              Guardar Torneo
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

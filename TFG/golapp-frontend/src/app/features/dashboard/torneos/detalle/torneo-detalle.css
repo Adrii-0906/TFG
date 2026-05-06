@@ -1,0 +1,252 @@
+:host {
+  display: block;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide arrows from number inputs */
+.hide-arrows::-webkit-inner-spin-button,
+.hide-arrows::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.hide-arrows {
+  -moz-appearance: textfield;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* ═══════════════════════════════════════════════
+   BRACKET SIMÉTRICO — Estilo Copa del Mundo
+   ═══════════════════════════════════════════════ */
+
+.bracket-symmetric {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  gap: 0;
+  padding: 2rem 0;
+}
+
+/* Columnas del bracket */
+.bracket-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 12px;
+  gap: 12px;
+}
+
+/* Columna central (final / rondas intermedias) */
+.bracket-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  gap: 16px;
+}
+
+/* Título de ronda */
+.bracket-round-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #10b981;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+/* Tarjeta de partido */
+.bracket-card {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.bracket-card:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(16, 185, 129, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Fila de equipo dentro de la tarjeta */
+.bracket-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  gap: 6px;
+  transition: background 0.15s ease;
+}
+
+.bracket-row + .bracket-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.bracket-row.winner {
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.bracket-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.bracket-row.winner .bracket-name {
+  color: #10b981;
+}
+
+.bracket-score {
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.bracket-score.pending {
+  color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bracket-score.played {
+  background: rgba(16, 185, 129, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.bracket-row.winner .bracket-score {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+/* Barra de estado inferior */
+.bracket-status {
+  text-align: center;
+  padding: 2px 0;
+  font-size: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.bracket-status.done {
+  color: rgba(16, 185, 129, 0.5);
+}
+
+/* Conectores: líneas horizontales saliendo de cada tarjeta */
+.bracket-col-left .bracket-card::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.bracket-col-right .bracket-card::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  background: rgba(16, 185, 129, 0.2);
+}
+
+/* Línea vertical entre conectores izquierdos */
+.bracket-col-left::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.bracket-col-right::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.bracket-col-left,
+.bracket-col-right {
+  position: relative;
+}
+
+/* Trofeo central */
+.bracket-trophy {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* Tarjeta de final más grande */
+.bracket-card-final {
+  min-width: 180px;
+}
+
+.bracket-card-final .bracket-row {
+  padding: 8px 12px;
+}
+
+.bracket-card-final .bracket-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bracket-card-final .bracket-score {
+  font-size: 13px;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 5px;
+}
